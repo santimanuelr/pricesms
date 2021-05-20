@@ -5,7 +5,7 @@ info:
     license:
         name: MIT
 servers:
-    - url: http://localhost:8080/
+    -   url: http://localhost:8080/
 paths:
     /prices:
         get:
@@ -14,13 +14,13 @@ paths:
             tags:
                 - prices
             parameters:
-                - name: limit
-                  in: query
-                  description: How many items to return at one time (max 100)
-                  required: false
-                  schema:
-                      type: integer
-                      format: int32
+                -   name: limit
+                    in: query
+                    description: How many items to return at one time (max 100)
+                    required: false
+                    schema:
+                        type: integer
+                        format: int32
             responses:
                 '200':
                     description: A paged array of prices
@@ -39,46 +39,84 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/Error"
-#        post:
-#            summary: Create a pet
-#            operationId: createPets
-#            tags:
-#                - pets
-#            responses:
-#                '201':
-#                    description: Null response
-#                default:
-#                    description: unexpected error
-#                    content:
-#                        application/json:
-#                            schema:
-#                                $ref: "#/components/schemas/Error"
-#    /pets/{petId}:
-#        get:
-#            summary: Info for a specific pet
-#            operationId: showPetById
-#            tags:
-#                - pets
-#            parameters:
-#                - name: petId
-#                  in: path
-#                  required: true
-#                  description: The id of the pet to retrieve
-#                  schema:
-#                      type: string
-#            responses:
-#                '200':
-#                    description: Expected response to a valid request
-#                    content:
-#                        application/json:
-#                            schema:
-#                                $ref: "#/components/schemas/Pet"
-#                default:
-#                    description: unexpected error
-#                    content:
-#                        application/json:
-#                            schema:
-#                                $ref: "#/components/schemas/Error"
+    #        post:
+    #            summary: Create a pet
+    #            operationId: createPets
+    #            tags:
+    #                - pets
+    #            responses:
+    #                '201':
+    #                    description: Null response
+    #                default:
+    #                    description: unexpected error
+    #                    content:
+    #                        application/json:
+    #                            schema:
+    #                                $ref: "#/components/schemas/Error"
+    /prices/{priceId}:
+        get:
+            summary: Info for a specific price
+            operationId: showPriceById
+            tags:
+                - prices
+            parameters:
+                -   name: priceId
+                    in: path
+                    required: true
+                    description: The id of the price to retrieve
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: Expected response to a valid request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PriceDTO"
+                default:
+                    description: unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+    /prices/apply:
+        get:
+            summary: Info for a specific price which applys for the parameters
+            operationId: findPriceByProductAndBrandAndStartDate
+            tags:
+                - prices
+            parameters:
+                -   in: query
+                    name: applyDate
+                    schema:
+                        type: string
+                        format: date-time
+                    description: The date from when we are making the request
+                -   in: query
+                    name: productId
+                    schema:
+                        type: integer
+                        format: int64
+                    description: The product identifier
+                -   in: query
+                    name: brandId
+                    schema:
+                        type: integer
+                        format: int64
+                    description: The brand identifier
+            responses:
+                '200':
+                    description: Expected response to a valid request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PriceDTO"
+                default:
+                    description: unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
 components:
     schemas:
         PriceDTO:
@@ -104,6 +142,9 @@ components:
                 endDate:
                     type: string
                     format: date-time
+                priceList:
+                    type: integer
+                    format: int64
                 productId:
                     type: integer
                     format: int64

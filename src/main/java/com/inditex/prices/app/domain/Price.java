@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Entity
 @Table(name = "prices")
@@ -26,7 +27,7 @@ public class Price {
 	private LocalDateTime endDate;
 
 	@Setter @Getter
-	private Long pricessl;
+	private Long priceList;
 
 	@Setter @Getter
 	private Long productId;
@@ -40,4 +41,16 @@ public class Price {
 	@Setter @Getter
 	private String currency;
 
+	public PriceDTO getDTO() {
+		PriceDTO priceDTO = new PriceDTO();
+		priceDTO.setPrice(this.price);
+		priceDTO.setCurrency(this.currency);
+		priceDTO.setPriority(this.priority);
+		priceDTO.setBrandId(this.brandId);
+		ZoneOffset zoneOffSet = ZoneOffset.systemDefault().getRules().getOffset(this.startDate);
+		priceDTO.setStartDate(this.startDate.atOffset(zoneOffSet));
+		priceDTO.setEndDate(this.endDate.atOffset(zoneOffSet));
+		priceDTO.setProductId(this.productId);
+		return priceDTO;
+	}
 }
