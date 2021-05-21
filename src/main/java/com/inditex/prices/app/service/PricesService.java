@@ -1,9 +1,11 @@
 package com.inditex.prices.app.service;
 
+import com.inditex.prices.app.domain.Price;
 import com.inditex.prices.app.domain.PriceDTO;
 import com.inditex.prices.app.repository.PriceRepository;
 import com.inditex.prices.app.web.PricesApiDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PricesService implements PricesApiDelegate {
@@ -37,6 +40,10 @@ public class PricesService implements PricesApiDelegate {
 	@Override
 	public ResponseEntity<PriceDTO> findPriceByProductAndBrandAndStartDate(OffsetDateTime applyDate,
 																		   Long productId, Long brandId) {
-		return ResponseEntity.ok(priceRepository.findPriceWitchApply(productId, brandId, applyDate.toLocalDateTime()).getDTO());
+		return priceRepository.findPriceWitchApply(productId, brandId, applyDate.toLocalDateTime(), PageRequest.of(0,1))
+			.stream()
+			.findFirst()
+			.map(p -> ResponseEntity.ok(p.getDTO()))
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 	}
 }
