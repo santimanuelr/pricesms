@@ -1,36 +1,22 @@
 package com.inditex.prices.app.integration;
 
 import com.inditex.prices.app.PricesmsApplication;
-import com.inditex.prices.app.domain.PriceDTO;
 import com.inditex.prices.app.repository.PriceRepository;
+import com.inditex.prices.app.web.PriceControllerTest;
+import com.inditex.prices.app.web.TestUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.validation.ConstraintViolationException;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.net.URL;
-import java.util.function.Supplier;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(classes = PricesmsApplication.class,
 	webEnvironment = SpringBootTest.WebEnvironment.MOCK)
@@ -149,13 +135,20 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void testGetPrices() throws Exception {
+	public void postPriceOkAndGetPrices() throws Exception {
+
+		mvc.perform(post("/prices").contentType(MediaType.APPLICATION_JSON)
+			.content(TestUtil.convertObjectToJsonBytes(PriceControllerTest.createEntity())))
+			.andDo(print())
+			.andExpect(status().isCreated())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.price", is(1)));
 
 		mvc.perform(get("/prices?limit=10").contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$", hasSize(4)));
+			.andExpect(jsonPath("$", hasSize(5)));
 
 	}
 

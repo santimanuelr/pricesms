@@ -41,7 +41,7 @@ public class PriceControllerTest {
 	private static final Long DEFAULT_PRIORITY = 1L;
 	private static final Long UPDATED_PRIORITY = 2L;
 
-	private static final BigDecimal DEFAULT_PRICE = new BigDecimal(1);
+	public static final BigDecimal DEFAULT_PRICE = new BigDecimal(1);
 	private static final BigDecimal UPDATED_PRICE = new BigDecimal(2);
 
 	private static final String DEFAULT_CURRENCY = "AAAAAAAAAA";
@@ -55,6 +55,7 @@ public class PriceControllerTest {
 
 	public static PriceDTO createEntity() {
 		Price price = new Price();
+		price.setBrandId(DEFAULT_PRODUCT_ID);
 		price.setStartDate(DEFAULT_START_DATE);
 		price.setEndDate(DEFAULT_END_DATE);
 		price.setProductId(DEFAULT_PRODUCT_ID);
@@ -65,16 +66,24 @@ public class PriceControllerTest {
 		return price.getDTO();
 	}
 
-//	@Test
-//	public void postPriceOk() throws Exception {
-//
-//		Customer customer = new Customer("Name", "Last Name",
-//			"Sierra vieja 123", "Lima", "customer@mail.com");
-//		ResponseEntity<Long> response = restTemplate.postForEntity(
-//			new URL(HOST + port + API_CUSTOMERS).toString(), customer, Long.class);
-//		assertEquals(HttpStatus.CREATED, response.getStatusCode());
-//
-//	}
+	@Test
+	public void postPriceOk() throws Exception {
+
+		PriceDTO priceDTO = createEntity();
+		ResponseEntity<PriceDTO> response = restTemplate.postForEntity(
+			new URL(HOST + port + API_PRICES).toString(), priceDTO, PriceDTO.class);
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+	}
+
+	@Test
+	public void badRequestPriceCreationTest() throws Exception {
+		PriceDTO priceDTO = createEntity();
+		priceDTO.setPrice(null);
+		ResponseEntity<PriceDTO> postForEntity = restTemplate.postForEntity(
+			new URL(HOST + port + API_PRICES).toString(), priceDTO,PriceDTO.class);
+		assertEquals(HttpStatus.BAD_REQUEST, postForEntity.getStatusCode());
+	}
 
 	@Test
 	public void getNotFoundPrices() throws Exception {
@@ -92,15 +101,6 @@ public class PriceControllerTest {
 			new URL(HOST + port + API_PRICES + "?limit=" + 2).toString(), PriceDTO[].class);
 		assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
-	}
-
-	@Test
-	public void badRequestPriceCreationTest() throws Exception {
-		PriceDTO priceDTO = createEntity();
-		priceDTO.setPrice(null);
-		ResponseEntity<PriceDTO> postForEntity = restTemplate.postForEntity(
-			new URL(HOST + port + API_PRICES).toString(), priceDTO,PriceDTO.class);
-		assertEquals(HttpStatus.BAD_REQUEST, postForEntity.getStatusCode());
 	}
 
 }
