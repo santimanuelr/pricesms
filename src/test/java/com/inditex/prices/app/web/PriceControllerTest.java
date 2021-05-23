@@ -1,6 +1,7 @@
 package com.inditex.prices.app.web;
 
 import com.inditex.prices.app.PricesmsApplication;
+import com.inditex.prices.app.domain.Price;
 import com.inditex.prices.app.domain.PriceDTO;
 import com.inditex.prices.app.repository.PriceRepository;
 import com.inditex.prices.app.service.PricesService;
@@ -13,25 +14,66 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
 
+import javax.persistence.EntityManager;
+import java.math.BigDecimal;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = PricesmsApplication.class,
 	webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql({"/data.sql"})
 public class PriceControllerTest {
 
 	public static final String HOST = "http://localhost:";
-	public static final String API_PRICES = "/api/prices";
+	public static final String API_PRICES = "/prices";
 	@LocalServerPort
 	private int port;
+
+
+	private static final LocalDateTime DEFAULT_START_DATE = LocalDateTime.now();
+	private static final LocalDateTime UPDATED_START_DATE = LocalDateTime.now(ZoneId.systemDefault());
+
+	private static final LocalDateTime DEFAULT_END_DATE = LocalDateTime.now();
+	private static final LocalDateTime UPDATED_END_DATE = LocalDateTime.now(ZoneId.systemDefault());
+
+	private static final Long DEFAULT_PRODUCT_ID = 1L;
+	private static final Long UPDATED_PRODUCT_ID = 2L;
+
+	private static final Long DEFAULT_PRIORITY = 1L;
+	private static final Long UPDATED_PRIORITY = 2L;
+
+	private static final BigDecimal DEFAULT_PRICE = new BigDecimal(1);
+	private static final BigDecimal UPDATED_PRICE = new BigDecimal(2);
+
+	private static final String DEFAULT_CURRENCY = "AAAAAAAAAA";
+	private static final String UPDATED_CURRENCY = "BBBBBBBBBB";
+
+	private static final Integer DEFAULT_STATUS = 1;
+	private static final Integer UPDATED_STATUS = 2;
 
 	@Autowired
 	private TestRestTemplate restTemplate;
 
 	@Autowired
 	private PriceRepository priceRepository;
+
+	public static PriceDTO createEntity() {
+		Price price = new Price();
+		price.setStartDate(DEFAULT_START_DATE);
+		price.setEndDate(DEFAULT_END_DATE);
+		price.setProductId(DEFAULT_PRODUCT_ID);
+		price.setPriority(DEFAULT_PRIORITY);
+		price.setPrice(DEFAULT_PRICE);
+		price.setCurrency(DEFAULT_CURRENCY);
+		price.setStatus(DEFAULT_STATUS);
+		return price.getDTO();
+	}
 
 //	@Test
 //	public void postPriceOk() throws Exception {
@@ -54,22 +96,21 @@ public class PriceControllerTest {
 	}
 
 	@Test
-	public void getNotFoundPrices2() throws Exception {
+	public void getPrices() throws Exception {
 
-		ResponseEntity<PriceDTO> getResponse = restTemplate.getForEntity(
-			new URL(HOST + port + API_PRICES + "/" + 1).toString(), PriceDTO.class);
-		assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
+		ResponseEntity<PriceDTO[]> getResponse = restTemplate.getForEntity(
+			new URL(HOST + port + API_PRICES + "?limit=" + 2).toString(), PriceDTO[].class);
+		assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 
 	}
 
 	@Test
-	public void getTest1() throws Exception {
-
-		ResponseEntity<PriceDTO> getResponse = restTemplate.getForEntity(
-			new URL(HOST + port + API_PRICES + "/apply?applyDate=" +
-				"2020-06-14T00:00:00-03:00&productId=35455&brandId=1").toString(), PriceDTO.class);
-		assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
-
+	public void badRequestPriceCreationTest() throws Exception {
+		PriceDTO priceDTO = createEntity();
+		priceDTO.setPrice(null);
+		ResponseEntity<PriceDTO> postForEntity = restTemplate.postForEntity(
+			new URL(HOST + port + API_PRICES).toString(), priceDTO,PriceDTO.class);
+		assertEquals(HttpStatus.BAD_REQUEST, postForEntity.getStatusCode());
 	}
 
 }

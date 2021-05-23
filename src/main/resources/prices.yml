@@ -39,20 +39,31 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/Error"
-    #        post:
-    #            summary: Create a pet
-    #            operationId: createPets
-    #            tags:
-    #                - pets
-    #            responses:
-    #                '201':
-    #                    description: Null response
-    #                default:
-    #                    description: unexpected error
-    #                    content:
-    #                        application/json:
-    #                            schema:
-    #                                $ref: "#/components/schemas/Error"
+        post:
+            summary: Create a price
+            operationId: createPrice
+            tags:
+                - prices
+            requestBody:
+                description: The price to be created
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PriceDTO'
+            responses:
+                '201':
+                    description: The price created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PriceDTO"
+                default:
+                    description: unexpected error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
     /prices/{priceId}:
         get:
             summary: Info for a specific price
@@ -122,7 +133,6 @@ components:
         PriceDTO:
             type: object
             required:
-                - id
                 - brandId
                 - startDate
                 - endDate
@@ -136,6 +146,7 @@ components:
                 brandId:
                     type: integer
                     format: int64
+                    minimum: 0
                 startDate:
                     type: string
                     format: date-time
@@ -153,6 +164,7 @@ components:
                     format: int64
                 price:
                     type: number
+                    minimum: 0
                 currency:
                     type: string
         Prices:

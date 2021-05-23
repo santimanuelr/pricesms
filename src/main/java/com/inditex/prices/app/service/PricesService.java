@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -45,5 +47,29 @@ public class PricesService implements PricesApiDelegate {
 			.findFirst()
 			.map(p -> ResponseEntity.ok(p.getDTO()))
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+	}
+
+	@Override
+	public ResponseEntity<PriceDTO> createPrice(PriceDTO priceDTO) {
+
+		//CRATE PRICE
+		Price price = new Price();
+		price.setPrice(priceDTO.getPrice());
+		price.setPriceList(priceDTO.getPriceList());
+		price.setPriority(priceDTO.getPriority());
+		price.setCurrency(priceDTO.getCurrency());
+		price.setBrandId(priceDTO.getBrandId());
+		price.setProductId(priceDTO.getProductId());
+		price.setStartDate(priceDTO.getStartDate().toLocalDateTime());
+		price.setEndDate(priceDTO.getEndDate().toLocalDateTime());
+		PriceDTO result = priceRepository.save(price).getDTO();
+		try {
+			return ResponseEntity
+				.created(new URI("/api/prices/" + result.getId()))
+				.body(result);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 }

@@ -41,6 +41,42 @@ public class Price {
 	@Setter @Getter
 	private String currency;
 
+	@Setter @Getter
+	private Integer status;
+
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof Price)) {
+			return false;
+		}
+		return id != null && id.equals(((Price) o).id);
+	}
+
+	@Override
+	public int hashCode() {
+		// see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+		return getClass().hashCode();
+	}
+
+	// prettier-ignore
+	@Override
+	public String toString() {
+		return "Price{" +
+			"id=" + getId() +
+			", startDate='" + getStartDate() + "'" +
+			", endDate='" + getEndDate() + "'" +
+			", productId=" + getProductId() +
+			", priority=" + getPriority() +
+			", price=" + getPrice() +
+			", currency='" + getCurrency() + "'" +
+			", status=" + getStatus() +
+			"}";
+	}
+
 	public PriceDTO getDTO() {
 		PriceDTO priceDTO = new PriceDTO();
 		priceDTO.setPrice(this.price);

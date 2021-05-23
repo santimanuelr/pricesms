@@ -40,7 +40,7 @@ public class IntegrationTest {
 
 
 	@Test
-	public void testApply1() throws Exception {
+	public void testCaseApply1() throws Exception {
 
 		mvc.perform(get("/prices/apply?applyDate=2020-06-14T10:00:00-03:00" +
 			"&productId=35455&brandId=1").contentType(MediaType.APPLICATION_JSON))
@@ -53,7 +53,7 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void testApply2() throws Exception {
+	public void testCaseApply2() throws Exception {
 
 		mvc.perform(get("/prices/apply?applyDate=2020-06-14T16:00:00-03:00" +
 			"&productId=35455&brandId=1").contentType(MediaType.APPLICATION_JSON))
@@ -66,7 +66,7 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void testApply3() throws Exception {
+	public void testCaseApply3() throws Exception {
 
 		mvc.perform(get("/prices/apply?applyDate=2020-06-14T21:00:00-03:00" +
 			"&productId=35455&brandId=1").contentType(MediaType.APPLICATION_JSON))
@@ -79,7 +79,7 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void testApply4() throws Exception {
+	public void testCaseApply4() throws Exception {
 
 		mvc.perform(get("/prices/apply?applyDate=2020-06-15T10:00:00-03:00" +
 			"&productId=35455&brandId=1").contentType(MediaType.APPLICATION_JSON))
@@ -92,7 +92,7 @@ public class IntegrationTest {
 	}
 
 	@Test
-	public void testApply5() throws Exception {
+	public void testCaseApply5() throws Exception {
 
 		mvc.perform(get("/prices/apply?applyDate=2020-06-16T21:00:00-03:00" +
 			"&productId=35455&brandId=1").contentType(MediaType.APPLICATION_JSON))
@@ -101,6 +101,16 @@ public class IntegrationTest {
 			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.productId", is(35455)))
 			.andExpect(jsonPath("$.price", is(38.95)));
+
+	}
+
+	@Test
+	public void testApplyNotFound() throws Exception {
+
+		mvc.perform(get("/prices/apply?applyDate=2020-06-16T21:00:00-03:00" +
+			"&productId=9999&brandId=9999").contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isNotFound());
 
 	}
 
