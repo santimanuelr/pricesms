@@ -18,6 +18,7 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PricesService implements PricesApiDelegate {
@@ -27,9 +28,8 @@ public class PricesService implements PricesApiDelegate {
 
 	@Override
 	public ResponseEntity<List<PriceDTO>> listPrices(Integer limit) {
-		PriceDTO priceDTO = new PriceDTO();
-		priceDTO.setPrice(new BigDecimal(8));
-		return ResponseEntity.ok(Collections.singletonList(priceDTO));
+		return ResponseEntity.ok(priceRepository.findAll(PageRequest.of(0, limit))
+			.stream().map(Price::getDTO).collect(Collectors.toList()));
 	}
 
 	@Override

@@ -99,21 +99,29 @@ paths:
             parameters:
                 -   in: query
                     name: applyDate
+                    required: true
                     schema:
                         type: string
                         format: date-time
                     description: The date from when we are making the request
                 -   in: query
                     name: productId
+                    required: true
+                    allowEmptyValue: false
                     schema:
                         type: integer
                         format: int64
+                        minimum: 0
                     description: The product identifier
                 -   in: query
                     name: brandId
+                    required: true
+                    allowEmptyValue: false
                     schema:
                         type: integer
                         format: int64
+                        minimum: 0
+                        nullable: false
                     description: The brand identifier
             responses:
                 '200':

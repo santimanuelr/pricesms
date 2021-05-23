@@ -12,10 +12,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.validation.ConstraintViolationException;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -24,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URL;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -37,7 +42,6 @@ public class IntegrationTest {
 
 	@Autowired
 	private PriceRepository repository;
-
 
 	@Test
 	public void testCaseApply1() throws Exception {
@@ -111,6 +115,47 @@ public class IntegrationTest {
 			"&productId=9999&brandId=9999").contentType(MediaType.APPLICATION_JSON))
 			.andDo(print())
 			.andExpect(status().isNotFound());
+
+	}
+
+	@Test
+	public void applyCaseBadRequest() throws Exception {
+
+		mvc.perform(get("/prices/apply?applyDate=2020-06-16T21:00:00-03:00" +
+			"&productId=-3&brandId=").contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest());
+
+	}
+
+	@Test
+	public void applyCaseBadRequest2() throws Exception {
+
+		mvc.perform(get("/prices/apply?applyDate=2020-06-16" +
+			"&productId=9999&brandId=9999").contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest());
+
+	}
+
+	@Test
+	public void applyCaseBadRequest3() throws Exception {
+
+		mvc.perform(get("/prices/apply?applyDate=2020-06-16" +
+			"&productId=-3&brandId=-2").contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isBadRequest());
+
+	}
+
+	@Test
+	public void testGetPrices() throws Exception {
+
+		mvc.perform(get("/prices?limit=10").contentType(MediaType.APPLICATION_JSON))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$", hasSize(4)));
 
 	}
 

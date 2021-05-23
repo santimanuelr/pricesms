@@ -4,7 +4,6 @@ import com.inditex.prices.app.PricesmsApplication;
 import com.inditex.prices.app.domain.Price;
 import com.inditex.prices.app.domain.PriceDTO;
 import com.inditex.prices.app.repository.PriceRepository;
-import com.inditex.prices.app.service.PricesService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,17 +11,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.jdbc.Sql;
 
-import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -59,9 +52,6 @@ public class PriceControllerTest {
 
 	@Autowired
 	private TestRestTemplate restTemplate;
-
-	@Autowired
-	private PriceRepository priceRepository;
 
 	public static PriceDTO createEntity() {
 		Price price = new Price();
