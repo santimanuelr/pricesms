@@ -2,7 +2,9 @@ package com.inditex.prices.app.service;
 
 import com.inditex.prices.app.domain.Price;
 import com.inditex.prices.app.domain.PriceDTO;
+import com.inditex.prices.app.domain.Rate;
 import com.inditex.prices.app.repository.PriceRepository;
+import com.inditex.prices.app.repository.RateRepository;
 import com.inditex.prices.app.web.PricesApiDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -11,13 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.OffsetDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +24,8 @@ public class PricesService implements PricesApiDelegate {
 
 	@Autowired
 	private PriceRepository priceRepository;
+	@Autowired
+	private RateRepository rateRepository;
 
 	@Override
 	public ResponseEntity<List<PriceDTO>> listPrices(Integer limit) {
@@ -42,20 +43,23 @@ public class PricesService implements PricesApiDelegate {
 	@Override
 	public ResponseEntity<PriceDTO> findPriceByProductAndBrandAndStartDate(OffsetDateTime applyDate,
 																		   Long productId, Long brandId) {
-		return priceRepository.findPriceWitchApply(productId, brandId, applyDate.toLocalDateTime(), PageRequest.of(0,1))
+		Price price = priceRepository.findPriceWitchApply(productId, brandId, applyDate.toLocalDateTime(), PageRequest.of(0,1))
 			.stream()
 			.findFirst()
-			.map(p -> ResponseEntity.ok(p.getDTO()))
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+		PriceDTO priceDTO = price.getDTO();
+		priceDTO.setRate(rateRepository.findById(price.getPriceListId()).map(Rate::getDTO).orElse(null));
+
+		return ResponseEntity.ok(priceDTO);
 	}
 
 	@Override
 	public ResponseEntity<PriceDTO> createPrice(PriceDTO priceDTO) {
 
-		//CRATE PRICE
 		Price price = new Price();
 		price.setPrice(priceDTO.getPrice());
-		price.setPriceList(priceDTO.getPriceList());
+		price.setPriceListId(priceDTO.getRate().getPriceListId());
 		price.setPriority(priceDTO.getPriority());
 		price.setCurrency(priceDTO.getCurrency());
 		price.setBrandId(priceDTO.getBrandId());

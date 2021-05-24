@@ -3,6 +3,7 @@ package com.inditex.prices.app.web;
 import com.inditex.prices.app.PricesmsApplication;
 import com.inditex.prices.app.domain.Price;
 import com.inditex.prices.app.domain.PriceDTO;
+import com.inditex.prices.app.domain.RateDTO;
 import com.inditex.prices.app.repository.PriceRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,11 @@ public class PriceControllerTest {
 		price.setPrice(DEFAULT_PRICE);
 		price.setCurrency(DEFAULT_CURRENCY);
 		price.setStatus(DEFAULT_STATUS);
-		return price.getDTO();
+		PriceDTO priceDTO = price.getDTO();
+		RateDTO rateDTO = new RateDTO();
+		rateDTO.setPriceListId(1l);
+		priceDTO.setRate(rateDTO);
+		return priceDTO;
 	}
 
 	@Test

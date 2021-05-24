@@ -138,6 +138,18 @@ paths:
                                 $ref: "#/components/schemas/Error"
 components:
     schemas:
+        RateDTO:
+            type: object
+            properties:
+                priceListId:
+                    type: integer
+                    format: int64
+                discount:
+                    type: number
+                extraCharge:
+                    type: number
+                name:
+                    type: string
         PriceDTO:
             type: object
             required:
@@ -161,7 +173,7 @@ components:
                 endDate:
                     type: string
                     format: date-time
-                priceList:
+                priceListId:
                     type: integer
                     format: int64
                 productId:
@@ -175,6 +187,8 @@ components:
                     minimum: 0
                 currency:
                     type: string
+                rate:
+                    $ref: "#/components/schemas/RateDTO"
         Prices:
             type: array
             items:
