@@ -86,7 +86,3 @@ Se valorará:
 Como MVP no incluí las entidades Producto ni Marca, que me parecían que en una próxima iteración podriamos incluirlas, pero para los requerimientos del ejercicio no hacian falta.
 Para la entidad Tarifa la entendí como que representa el descuento o incremento en el precio de un producto. Para prevenir el uso de joins, cuando consultaba la tabla precios la entidad Tarifa la obtengo luego por id.
 
-## Heroku
-Hago deploy del proyecto con github actions a Heroku.
-Se puede probar ejecutando alguno de los servicios
-``
