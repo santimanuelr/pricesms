@@ -27,7 +27,7 @@ public class Price {
 	private LocalDateTime endDate;
 
 	@Setter @Getter
-	private Long priceList;
+	private Long priceListId;
 
 	@Setter @Getter
 	private Long productId;
@@ -87,6 +87,8 @@ public class Price {
 		priceDTO.setStartDate(this.startDate.atOffset(zoneOffSet));
 		priceDTO.setEndDate(this.endDate.atOffset(zoneOffSet));
 		priceDTO.setProductId(this.productId);
+		priceDTO.setPriceListId(this.priceListId);
+		priceDTO.setRate(new RateDTO());
 		return priceDTO;
 	}
 }
