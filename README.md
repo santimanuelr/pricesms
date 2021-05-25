@@ -11,7 +11,7 @@ Para windows y linux `mvn spring-boot:run`
 
 ## Correr los test
 
-Para windows y linux `mvn clean build`
+Para windows y linux `mvn clean test`
 
 ## Enunciado
 
@@ -83,6 +83,11 @@ Se valorará:
     
   
 ## Notas
-Como MVP no incluí las entidades Producto ni Marca, que me parecían que en una próxima iteración podriamos incluirlas, pero para los requerimientos del ejercicio no hacian falta.
-Para la entidad Tarifa la entendí como que representa el descuento o incremento en el precio de un producto. Para prevenir el uso de joins, cuando consultaba la tabla precios la entidad Tarifa la obtengo luego por id.
+Como MVP no incluí las entidades Producto ni Marca, que me parecían que en una próxima iteración se podrian incluir, pero para los requerimientos del ejercicio no hacian falta.
+La entidad Tarifa la entendí como que representa el descuento o incremento en el precio de un producto. Para prevenir el uso de joins, cuando consultaba la tabla precios la entidad Tarifa la consulto luego por su id.
 
+## Pruebas
+Se pueden realizar distintos curls con la aplicación corriendo localmente.
+`curl --location --request GET 'http://localhost:8080/prices/apply?applyDate=2020-06-14T00:00:00-03:00&productId=35455&brandId=1'`
+
+`curl --location --request GET 'http://localhost:8080/prices/1'`
